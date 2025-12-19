@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Turnos</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Turnos</h1>
+    </header>
+    <main>
+        <section class="turnos">
+            <button id="btnSacarTurno">Sacar Turno</button>
+            <p id="ultimoTurno">Próximo turno: -</p>
+        </section>
+
+        <section class="cajas">
+            <h2>Atención en Cajas</h2>
+            <div id="cajasContainer"></div>
+        </section>
+
+        <section class="estado">
+            <h2>Estado Actual</h2>
+            <pre id="estadoSistema">Cargando...</pre>
+        </section>
+    </main>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

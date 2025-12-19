@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacar Turno</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="header-images">
+        <img src="/static/images/logoConnet.png" alt="Logo Izquierda" class="img-left">
+        <img src="/static/images/logoSMT.png" alt="Logo Derecha" class="img-right">
+    </div>
+    <div class="container">
+        <header>
+            <h1>Sistema de Turnos</h1>
+        </header>
+        <main>
+            <section class="turno-section">
+                <p id="ultimoTurno">Próximo turno: -</p>
+                <button id="btnSacarTurno">Sacar Turno</button>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnSacarTurno = document.getElementById("btnSacarTurno");
+            const ultimoTurno = document.getElementById("ultimoTurno");
+
+            btnSacarTurno.addEventListener("click", () => {
+                fetch("/sacar_turno", { method: "POST" })
+                    .then(response => response.json())
+                    .then(data => {
+                        ultimoTurno.textContent = `Próximo turno: ${data.turno_generado}`;
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

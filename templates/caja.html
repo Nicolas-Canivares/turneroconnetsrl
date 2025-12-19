@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla Caja {{ caja_id }}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Caja {{ caja_id }}</h1>
+    </header>
+    <main>
+        <section class="caja">
+            <h2>Turno Actual</h2>
+            <p id="turnoActual">-</p>
+            <button id="atenderTurno">Atender Turno</button>
+            <button id="liberarCaja">Liberar Caja</button>
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cajaId = {{ caja_id }};
+            const turnoActual = document.getElementById("turnoActual");
+            const btnAtender = document.getElementById("atenderTurno");
+            const btnLiberar = document.getElementById("liberarCaja");
+
+            // Función para cargar el turno actual de la caja
+            function cargarTurno() {
+                fetch(`/estado`)
+                    .then(response => response.json())
+                    .then(data => {
+                        turnoActual.textContent = data.cajas[cajaId] || "-";
+                    });
+            }
+
+            btnAtender.addEventListener("click", () => {
+                fetch("/atender_turno", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ caja: cajaId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            cargarTurno();
+                        }
+                    });
+            });
+
+            btnLiberar.addEventListener("click", () => {
+                fetch("/liberar_caja", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ caja: cajaId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            cargarTurno();
+                        }
+                    });
+            });
+
+            // Cargar el estado inicial
+            cargarTurno();
+        });
+    </script>
+</body>
+</html>

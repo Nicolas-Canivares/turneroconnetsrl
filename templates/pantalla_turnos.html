@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Pantalla de Turnos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        /* Contenedor del header */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #4CAF50;
+            padding: 0.5rem 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Título */
+        .header-container h1 {
+            color: white;
+            margin: 0;
+            font-size: 2rem;
+            text-align: center;
+            flex: 1;
+        }
+
+        /* Imágenes del header */
+        .header-container img {
+            height: 60px;
+            width: auto;
+        }
+
+        /* Estilo para el historial de turnos */
+        .historial {
+    margin-top: 3rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 600px;  /* Aumenta la altura para permitir más turnos visibles */
+    overflow-y: auto;  /* Permitir scroll si el contenido excede la altura */
+    border-top: 2px solid #4CAF50;
+    text-align: left;
+    font-size: 1.1rem;  /* Reduce el tamaño de la fuente si es necesario */
+    line-height: 1.5;  /* Ajusta el espaciado entre líneas */
+    display: block;
+}
+
+
+        .historial div {
+            margin-bottom: 2rem;  /* Espacio adicional entre los turnos */
+            padding: 0.6rem;  /* Padding más amplio para mayor espacio alrededor del texto */
+            background-color: #f4f4f9;  /* Color neutro para los turnos anteriores */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+            display: flex;
+            flex-direction: column-reverse; /* Invertir solo la posición de los turnos nuevos */
+        }
+
+        /* Resaltar los turnos nuevos */
+        .historial div.nuevo {
+            background-color: #eaf7e1;  /* Color de fondo suave para los nuevos */
+            border-left: 5px solid #4CAF50;  /* Borde izquierdo para destacar */
+            animation: fadeIn 1s ease-out;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Sombra sutil para mayor énfasis */
+        }
+
+        /* Resaltar la fecha */
+        .historial div .fecha {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .historial div p {
+            font-size: 1.9rem;  /* Aumentar el tamaño del texto dentro de los turnos */
+        }
+
+        .historial div:hover {
+            background-color: #eaf7e1;
+        }
+
+        /* Scroll del historial (opcional, ya que se está ocultando) */
+        .historial::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .historial::-webkit-scrollbar-thumb {
+            background-color: #4CAF50;
+            border-radius: 10px;
+        }
+
+        .historial::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+/* 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        } */
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <img src="/static/images/logoConnet.png" alt="Logo Izquierda">
+    <h1>Historial de Turnos</h1>
+    <img src="/static/images/logoSMT.png" alt="Logo Derecha">
+</div>
+
+<!-- Historial de turnos -->
+<div class="historial" id="historialContainer"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const historialContainer = document.getElementById("historialContainer");
+
+    let turnosAnunciados = {};  // Almacena los turnos ya anunciados
+    let historialTurnos = [];  // Almacena los turnos en el historial
+    const maxTurnosVisibles = 10;  // Número máximo de turnos visibles en la pantalla
+
+    function cargarTurnos() {
+        fetch("/estado")
+            .then(response => response.json())
+            .then(data => {
+                const cajas = data.cajas;
+
+                if (Object.keys(cajas).length === 0) {
+                    historialContainer.innerHTML = "<p>No hay turnos disponibles.</p>";
+                } else {
+                    const now = new Date().toLocaleString();  // Obtener fecha y hora actual
+
+                    for (const [caja, turno] of Object.entries(cajas)) {
+                        // Verificar que el turno no sea null, undefined o vacío
+                        if (turno != null && turno !== '') {
+                            const turnoKey = `caja${caja}_turno${turno}`;
+
+                            // Agregar al historial si es un turno nuevo
+                            if (!turnosAnunciados[turnoKey]) {
+                                turnosAnunciados[turnoKey] = true;
+                                historialTurnos.unshift({
+                                    texto: `Caja ${caja} - Turno ${turno}`,
+                                    fecha: now
+                                });
+
+                                // Llamar a la función para reproducir el audio
+                                anunciarVoz(caja, turno);
+                            }
+                        }
+                    }
+                    actualizarHistorial();
+                }
+            });
+    }
+
+    function actualizarHistorial() {
+    if (historialTurnos.length > maxTurnosVisibles) {
+        historialTurnos.pop();  // Eliminar el turno más antiguo
+    }
+
+    historialContainer.innerHTML = ""; // Limpiar antes de agregar los turnos actualizados
+
+    historialTurnos.slice(0, maxTurnosVisibles).forEach(turno => {
+        const turnoDiv = document.createElement("div");
+        turnoDiv.classList.add("nuevo");
+
+        const turnoTexto = document.createElement("p");
+        turnoTexto.textContent = turno.texto;
+        turnoDiv.appendChild(turnoTexto);
+
+        const fechaElemento = document.createElement("p");
+        fechaElemento.textContent = `Añadido: ${turno.fecha}`;
+        fechaElemento.classList.add("fecha");
+        turnoDiv.appendChild(fechaElemento);
+
+        historialContainer.appendChild(turnoDiv);
+    });
+}
+
+    function anunciarVoz(caja, turno) {
+        const audio = new Audio(`/audio/turno_caja${caja}_turno${turno}.mp3`);
+        audio.play().catch(error => {
+            console.error("Error al reproducir el audio:", error);
+        });
+    }
+
+    // Cargar turnos inicialmente y actualizar cada 5 segundos
+    setInterval(cargarTurnos, 5000);
+    cargarTurnos();
+});
+
+</script>
+</body>
+</html>

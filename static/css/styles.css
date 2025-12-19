@@ -1,0 +1,159 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+}
+
+.header-images {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 20px; /* Ajusta la altura desde el borde superior */
+    left: 0;
+    right: 0;
+    padding: 0 20px; /* Espaciado lateral */
+    pointer-events: none; /* Evita que interfiera con el clic */
+}
+
+.header-images img {
+    height: auto;
+    width: 300px; /* Ajusta el ancho para las imágenes */
+    max-width: 40%; /* Evita que ocupen demasiado espacio */
+}
+
+.container {
+    width: 100%;
+    max-width: 800px; /* Aumentamos el ancho máximo para dar más espacio */
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 3rem; /* Mayor espacio interior */
+    margin-top: 50px; /* Espacio desde el borde superior */
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.turno-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+#ultimoTurno {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    background: #f8f9fa;
+    padding: 0.5rem 1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background-color: #007bff;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 350px; /* Limitamos el ancho de los botones */
+    margin-bottom: 1rem; /* Espacio entre los botones */
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espacio entre los elementos del formulario */
+}
+
+input, select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem; /* Espacio entre los campos de entrada */
+    width: 100%;
+    max-width: 350px;
+}
+
+input:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Adaptaciones para tablets */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    #ultimoTurno {
+        font-size: 1.5rem;
+    }
+
+    button {
+        font-size: 1.2rem;
+    }
+
+    .header-images img {
+        width: 200px;
+        max-width: 35%;
+    }
+
+    .header-images {
+        top: 10px;
+        padding: 0 10px;
+    }
+}
